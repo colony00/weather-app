@@ -10,20 +10,28 @@ async function getWeatherData (location,celscius=true) {
   const weatherType = json.weather[0].main;
   let temp = null;
   if (celscius) {
-    temp = `${json.main.temp - 273} °C`
+    temp = `${Math.round(json.main.temp - 273.15)} °C`
   } else {
-    temp = `${(json.main.temp - 273)*(9/5)+32} °F`
+    temp = `${Math.round((json.main.temp - 273.15)*(9/5)+32)} °F`
   }
   return {weatherType,temp}
 }
 
-getWeatherData("copenhagen")
-  .then( 
-    function fulfilled ( {weatherType, temp} ) {
-      console.log(weatherType,temp)
-    },
+const form = document.querySelector("form");
+const loc = document.querySelector("#loc");
 
-    function rejected(err) {
-      console.log("Failed with error:",err)
-    }
-  )
+form.addEventListener("submit", e => {
+  const location = loc.value;
+
+  getWeatherData(location)
+    .then( 
+      function fulfilled ( {weatherType, temp} ) {
+        console.log(weatherType,temp)
+      },
+  
+      function rejected(err) {
+        console.log("Failed with error:",err)
+      }
+    );
+  e.preventDefault();
+})
